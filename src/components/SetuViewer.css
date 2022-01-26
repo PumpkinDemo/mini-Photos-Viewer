@@ -1,0 +1,13 @@
+.setu-viewer {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.viewer {
+    margin: 90px auto;
+}
+
+.pagination {
+    margin: 0 auto;
+}
