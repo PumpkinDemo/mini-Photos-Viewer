@@ -10,3 +10,8 @@ developed by react
 
 + 本来用的vue，但vue的v-viewer总是出问题
 + （I am too vegetable）
+
+todo:
+
+- [ ] 页面滑动
+- [ ] 页面自适应
