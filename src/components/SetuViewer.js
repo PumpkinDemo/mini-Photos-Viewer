@@ -1,13 +1,11 @@
 import React from "react";
 import { PhotoProvider, PhotoConsumer } from "react-photo-view";
 import 'react-photo-view/dist/index.css';
-// import Pagination from '@mui/material/Pagination';
 import {Pagination} from 'antd'
 import 'antd/dist/antd.min.css';
 
 import "./SetuViewer.css";
 
-// import ImageContainer from "./ImageContainer";
 
 class Viewer extends React.Component{
     constructor(props){
