@@ -57,7 +57,7 @@ class SetuViewer extends React.Component {
         fetch('http://sese.pumpk1n.com/setu/?action=list')
         .then(res => res.text())
         .then(res => JSON.parse(res))
-        .then(res => res.map(e => 'http://sese.pumpk1n.com/setu/setus/' + e))
+        .then(res => res.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e))
         .then(res => {
             this.setState({
                 images: res
