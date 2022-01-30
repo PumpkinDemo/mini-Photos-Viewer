@@ -3,8 +3,8 @@ import { PhotoProvider, PhotoConsumer } from "react-photo-view";
 import 'react-photo-view/dist/index.css';
 import {Pagination} from 'antd'
 import 'antd/dist/antd.min.css';
-
 import "./SetuViewer.css";
+// import MyPhotoProvider from "./MyPhotoProvider";
 
 
 class Viewer extends React.Component{
@@ -16,28 +16,29 @@ class Viewer extends React.Component{
     }
 
     render(){
-        let photoImages = this.props.images;
+        let photoImages = this.props.images.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e);
+        let realImages = this.props.images.map(e => 'http://sese.pumpk1n.com/setu/setus/' + e);
         let pageSize = this.props.pageSize;
         let pageStart = this.props.pageStart;
         let pageEnd = pageStart + pageSize;
 
-        // console.log(photoImages);
+        // console.log(realImages);
         return (
             <PhotoProvider>
-            <div style={{display: "flex", }}>
-                {photoImages.map((item, index) => (
-                    <PhotoConsumer key={index} src={item} intro={item}>
-                        {pageStart <= index && index < pageEnd && <div style={{
-                            margin: "20px 20px 20px 20px",
-                            width: "200px",
-                            height: "400px",
-                            cursor: "pointer",
-                            background: `url(${item}) no-repeat center`,
-                            backgroundSize: "cover",
-                        }}/>}
-                    </PhotoConsumer>
-                ))}
-            </div>
+                <div style={{display: "flex", }}>
+                    {photoImages.map((item, index) => (
+                        <PhotoConsumer key={index} src={item} intro={item}>
+                            {pageStart <= index && index < pageEnd && <div style={{
+                                margin: "20px 20px 20px 20px",
+                                width: "200px",
+                                height: "400px",
+                                cursor: "pointer",
+                                background: `url(${item}) no-repeat center`,
+                                backgroundSize: "cover",
+                            }}/>}
+                        </PhotoConsumer>
+                    ))}
+                </div>
             </PhotoProvider>
         );
     }
@@ -54,10 +55,10 @@ class SetuViewer extends React.Component {
     }
 
     get_images(){
-        fetch('http://sese.pumpk1n.com/setu/?action=list')
+        fetch('//sese.pumpk1n.com/setu/?action=list')
         .then(res => res.text())
         .then(res => JSON.parse(res))
-        .then(res => res.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e))
+        // .then(res => res.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e))
         .then(res => {
             this.setState({
                 images: res
@@ -67,7 +68,7 @@ class SetuViewer extends React.Component {
     }
 
     pageChangeHandler = (pageNum) => {
-        console.log(pageNum);
+        // console.log(pageNum);
         this.setState({
             pageStart: pageNum - 1
         })
