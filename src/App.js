@@ -1,10 +1,11 @@
 import './App.css';
 import SetuViewer from './components/SetuViewer';
+import SetuAlbum from './components/SetuAlbum';
 
 function App() {
     return (
         <div className="App">
-            <SetuViewer/>
+            <SetuAlbum />
         </div>
     );
 }

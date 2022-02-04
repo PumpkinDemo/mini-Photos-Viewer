@@ -1,0 +1,38 @@
+.setu-viewer {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.viewer {
+    margin: 90px auto;
+}
+
+.pagination {
+    margin: 0 auto;
+}
+
+.image-list {
+    width: 100%;
+    margin: 40px auto;
+    padding: 40px;
+    display: flex;
+    flex-flow: row wrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.image {
+    box-sizing: border-box;
+    /* background-color: aquamarine; */
+}
+
+.end {
+    font-size: large;
+    padding: 20px;
+    background-color: aquamarine;
+}
+
+.bottom-slogan {
+    margin: 10px;
+}   

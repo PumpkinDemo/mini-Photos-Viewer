@@ -11,3 +11,10 @@
 .pagination {
     margin: 0 auto;
 }
+
+.image-list {
+    padding: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}

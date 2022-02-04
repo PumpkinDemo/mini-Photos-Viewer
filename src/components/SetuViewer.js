@@ -1,11 +1,19 @@
-import React from "react";
-import { PhotoProvider, PhotoConsumer } from "react-photo-view";
+import React, { useEffect, useState } from "react";
+import { PhotoProvider, PhotoConsumer, PhotoSlider } from "react-photo-view";
 import 'react-photo-view/dist/index.css';
 import {Pagination} from 'antd'
 import 'antd/dist/antd.min.css';
 import "./SetuViewer.css";
+import ViewBox from "./ViewBox";
+import LazyLoad from "react-lazyload";
 // import MyPhotoProvider from "./MyPhotoProvider";
 
+const arrayShuffle = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+        let j = ~~(i + Math.random() * (arr.length - i));
+        [ arr[i], arr[j] ] = [ arr[j], arr[i] ];
+    }
+}
 
 class Viewer extends React.Component{
     constructor(props){
@@ -28,14 +36,7 @@ class Viewer extends React.Component{
                 <div style={{display: "flex", }}>
                     {photoImages.map((item, index) => (
                         <PhotoConsumer key={index} src={item} intro={item}>
-                            {pageStart <= index && index < pageEnd && <div style={{
-                                margin: "20px 20px 20px 20px",
-                                width: "200px",
-                                height: "400px",
-                                cursor: "pointer",
-                                background: `url(${item}) no-repeat center`,
-                                backgroundSize: "cover",
-                            }}/>}
+                            {pageStart <= index && index < pageEnd && <ViewBox url={item}/>}
                         </PhotoConsumer>
                     ))}
                 </div>
@@ -43,6 +44,7 @@ class Viewer extends React.Component{
         );
     }
 }
+
 
 class SetuViewer extends React.Component {
     constructor(props){
@@ -98,4 +100,92 @@ class SetuViewer extends React.Component {
     }
 }
 
+
+class SetuAlbum extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            images: [],
+            visible: false,
+            sliderIndex: 0
+        }
+        this.closeHandler = this.closeHandler.bind(this);
+        this.showHandler = this.showHandler.bind(this);
+        this.setSliderIndex = this.setSliderIndex.bind(this);
+    }
+
+    get_images(){
+        fetch('//sese.pumpk1n.com/setu/?action=list')
+        .then(res => res.text())
+        .then(res => JSON.parse(res))
+        .then(res => {
+            arrayShuffle(res);
+            this.setState({
+                images: res,
+            })
+        })
+    }
+
+    setVisible(visible){
+        this.setState({
+            visible: visible
+        })
+    }
+
+    setSliderIndex(index){
+        this.setState({
+            sliderIndex: index
+        })
+    }
+
+    componentDidMount(){
+        this.get_images();
+    }
+
+    showHandler(index){
+        // console.log(index);
+        // this.setSliderIndex(index);
+        // this.setVisible(true);
+        this.setState({
+            sliderIndex: index,
+            visible: true
+        })
+    }
+
+    closeHandler(){
+        this.setVisible(false);
+    }
+
+    render(){
+        let images = this.state.images.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e);
+        // console.log(images);
+        return (<>
+            <div className="image-list">
+                {images.slice(0, 40).map((item, index) => (
+                    // <LazyLoad offset={100} overflow={true}>
+                        <div onClick={this.showHandler.bind(this, index)} key={index}>
+                            {/* <PhotoConsumer key={index} src={item} intro={item}> */}
+                                <ViewBox url={item} />
+                            {/* </PhotoConsumer> */}
+                        </div>
+                    // </LazyLoad>
+                ))}
+            </div>
+            
+            <center className="bottom-completed">
+                <p>已经到底啦</p>
+            </center>
+            
+            <PhotoSlider 
+                images={images.map(item => ({ src: item }))} 
+                visible={this.state.visible}
+                onClose={this.closeHandler}
+                index={this.state.sliderIndex}
+                onIndexChange={this.setSliderIndex}
+            />
+        </>);
+    }
+}
+
 export default SetuViewer;
+export { SetuAlbum };
