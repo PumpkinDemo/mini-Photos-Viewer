@@ -4,6 +4,8 @@
 
 点击图片可以预览
 
+[Demo](https://sese.pumpk1n.com/setu/index/)
+
 developed by react
 
 为什么是react
