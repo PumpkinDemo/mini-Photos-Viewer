@@ -1,9 +1,12 @@
 import { PhotoSlider } from "react-photo-view";
 import ViewBox from "./ViewBox";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { InView } from "react-intersection-observer";
-
+import { Input, InputNumber } from 'antd';
 import './SetuAlbum.css'
+
+const { Search } = Input;
+
 
 const arrayShuffle = (arr) => {
     for (let i = 0; i < arr.length; i++) {
@@ -12,14 +15,21 @@ const arrayShuffle = (arr) => {
     }
 }
 
+
 const SetuAlbum = () => {
+
     const [images, setImages] = useState([]);
     const [sliderVisible, setSliderVisible] = useState(false);
     const [sliderIndex, setSliderIndex] = useState(0);
     const [end, setEnd] = useState(20);
+    const [keyword, setKeyword] = useState('');
+    const [maxDisplay, setMaxDisplay] = useState(20);
+    const [doneCnt, doneCntInc] = useReducer((state) => state + 1, 0);
+
+    const backendHost = 'https://sese.pumpk1n.com';
 
     const get_images = () => {
-        fetch('//sese.pumpk1n.com/setu/?action=list')
+        fetch(backendHost + '/setu/?action=list')
         .then(res => res.text())
         .then(res => JSON.parse(res))
         .then(res => {
@@ -39,24 +49,55 @@ const SetuAlbum = () => {
         setSliderVisible(false);
     }
 
-    let image_urls = images.map(e => 'http://sese.pumpk1n.com/setu/image.php?img=' + e);
-    let real_image_urls = images.map(e => 'http://sese.pumpk1n.com/setu/setus/' + e)
+    const onSearch = (value) => {
+        setKeyword(value);
+    }
+
+    const onInputNumberChange = (value) => {
+        setMaxDisplay(value);
+        if(end > value){
+            setEnd(value);
+        }
+    }
+
+    console.log("keyword", keyword);
+    console.log("max display", maxDisplay);
+    let image_urls = images.filter(e => !e || e.indexOf(keyword) > -1)
+                           .map(e => backendHost + '/setu/image.php?img=' + e);
+    // let real_image_urls = images.map(e => backendHost + '/setu/setus/' + e);
     let images_len = image_urls.length;
 
     return (<div>
+
+        <div className="search">
+            <Search
+                placeholder="input search text"
+                allowClear
+                enterButton="Search"
+                size="large"
+                onSearch={onSearch}
+            />
+        </div>
+
+        <div className="inputnumber">
+            max display: <InputNumber min={20} defaultValue={20} onChange={onInputNumberChange} />
+        </div>
+
         <div className="image-list">
             {image_urls.map((item, index) => (index < end &&
-                <div className="image" onClick={() => {showHandler(index)}} key={index}>
-                    <ViewBox src={item} />
+                <div className="image" onClick={() => {showHandler(index)}} key={item}>
+                    <ViewBox src={item} onDone={doneCntInc}/>
                 </div>
             ))}
         </div>
             
         <InView onChange={(inView) => {
-            if(inView && end < images_len && end < 220){
+            if(inView && end < images_len && end <= doneCnt && end < maxDisplay){
                 setEnd(end+5);
+            }else{
+                console.log(end, images_len, doneCnt, maxDisplay);
             }
-            console.log(inView);
+            console.log("end", inView);
         }}>
             {({ inView, ref, entry }) => {
                 return (
@@ -73,6 +114,7 @@ const SetuAlbum = () => {
         
         <PhotoSlider 
             images={image_urls.map(item => ({ src: item }))} 
+            // images={real_image_urls.map(item => ({ src:item }))}
             visible={sliderVisible}
             onClose={closeHandler}
             index={sliderIndex}
